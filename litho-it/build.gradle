@@ -1,0 +1,52 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
+
+    useLibrary 'org.apache.http.legacy'
+
+    defaultConfig {
+        minSdkVersion rootProject.minSdkVersion
+    }
+
+    testOptions {
+        unitTests.all {
+            jvmArgs '-Dcom.facebook.litho.is_oss=true'
+            testLogging {
+                events "passed", "skipped", "failed", "standardOut", "standardError"
+            }
+        }
+    }
+}
+
+dependencies {
+    compile project(':litho-core')
+    provided project(':litho-annotations')
+    testCompile project(':litho-stubs')
+    testCompile project(':litho-testing')
+    testCompile project(':litho-widget')
+
+    // Testing
+    testCompile deps.compileTesting
+    testCompile deps.junit
+    testCompile deps.assertjCore
+    testCompile deps.mockitoCore
+    testCompile deps.robolectric
+    testCompile deps.soloader
+    testCompile files(getRuntimeJar())
+}
+
+static def getRuntimeJar() {
+    try {
+        final File javaBase = new File(System.getProperty("java.home")).getCanonicalFile();
+        File runtimeJar = new File(javaBase, "lib/rt.jar");
+        if (runtimeJar.exists()) {
+            return runtimeJar;
+        }
+        runtimeJar = new File(javaBase, "jre/lib/rt.jar");
+        return runtimeJar.exists() ? runtimeJar : null;
+    } catch (IOException e) {
+        throw new RuntimeException(e);
+    }
+}

@@ -1,0 +1,12 @@
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+targetCompatibility = rootProject.targetCompatibilityVersion
+sourceCompatibility = rootProject.sourceCompatibilityVersion
+
+dependencies {
+    // Android Support Library
+    compile deps.supportAnnotations
+}
+
+apply from: rootProject.file('gradle/release.gradle')

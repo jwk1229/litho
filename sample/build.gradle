@@ -1,0 +1,44 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
+
+    targetCompatibility = targetCompatibilityVersion
+    sourceCompatibility = sourceCompatibilityVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.minSdkVersion
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+    }
+
+    // TODO(#62): Re-enable abort on error.
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    compile project(':litho-core')
+    compile project(':litho-stetho')
+    compile project(':litho-widget')
+    compile project(':litho-fresco')
+    provided project(':litho-annotations')
+    annotationProcessor project(':litho-processor')
+
+    // First-party
+    compile deps.soloader
+
+    // Annotations
+    provided deps.jsr305
+    provided deps.inferAnnotations
+
+    // Support Library
+    compile deps.supportAppCompat
+    compile deps.supportRecyclerView
+
+    androidTestCompile project(':litho-espresso')
+    androidTestCompile deps.supportEspresso
+    androidTestCompile deps.supportEspressoIntents
+    androidTestCompile deps.junit
+}

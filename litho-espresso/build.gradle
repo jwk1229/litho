@@ -1,0 +1,30 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
+
+    defaultConfig {
+        testInstrumentationRunner 'com.facebook.litho.testing.espresso.LithoEspressoTestRunner'
+        minSdkVersion rootProject.minSdkVersion
+    }
+}
+
+dependencies {
+    compile project(':litho-core')
+
+    compile deps.supportEspresso
+    compile deps.screenshot
+    androidTestProvided project(':litho-annotations')
+    androidTestCompile project(':litho-widget')
+    androidTestAnnotationProcessor project(':litho-processor')
+}
+
+apply from: rootProject.file('gradle/release.gradle')
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+artifacts.add('archives', sourcesJar)

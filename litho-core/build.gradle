@@ -1,0 +1,64 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
+project.group = GROUP
+version = VERSION_NAME
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
+
+    // We're on an old version of Robolectric which requires this, sadly.
+    useLibrary 'org.apache.http.legacy'
+
+    defaultConfig {
+        minSdkVersion rootProject.minSdkVersion
+    }
+
+    buildTypes {
+        def internalBuildField = 'IS_INTERNAL_BUILD'
+
+        debug {
+            buildConfigField 'boolean', internalBuildField, 'true';
+        }
+
+        release {
+            buildConfigField 'boolean', internalBuildField, 'false';
+        }
+    }
+
+    // TODO(#62): Re-enable abort on error.
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    // Project dependencies
+    provided project(':litho-annotations')
+    provided project(':litho-stubs')
+
+    // Provided dependencies
+    provided deps.jsr305
+    provided deps.inferAnnotations
+
+    // Android Support Library
+    provided deps.supportAnnotations
+    compile deps.supportCoreUi
+    compile deps.supportRecyclerView
+
+    // First-party dependencies
+    if (project.hasProperty('RELEASE_MODE')) {
+        compile deps.yoga
+    } else {
+        compile project(':yogajni')
+    }
+}
+
+apply from: rootProject.file('gradle/release.gradle')
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+artifacts.add('archives', sourcesJar)

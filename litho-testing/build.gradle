@@ -1,0 +1,34 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
+
+    useLibrary 'org.apache.http.legacy'
+
+    defaultConfig {
+        minSdkVersion rootProject.minSdkVersion
+    }
+}
+
+dependencies {
+    compile project(':litho-core')
+    compile project(':litho-processor')
+
+    compile deps.assertjCore
+    compile deps.guava
+    compile deps.jsr305
+    compile deps.junit
+    compile deps.mockitoCore
+    compile deps.powermockReflect
+    compile deps.robolectric
+}
+
+apply from: rootProject.file('gradle/release.gradle')
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+artifacts.add('archives', sourcesJar)
